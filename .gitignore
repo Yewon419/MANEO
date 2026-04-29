@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+userData/
+*.log
+.DS_Store
+Thumbs.db
+sprite/__pycache__/

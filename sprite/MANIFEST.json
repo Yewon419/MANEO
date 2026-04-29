@@ -1,0 +1,196 @@
+{
+  "$schema_version": 1,
+  "$generated_at": "2026-04-28",
+  "$description": "MANEO 스프라이트/사운드 단일 진리원. 코드는 항상 키 경로(예: 'body.stage3.wood.brown_light.bear')로 접근. exists=false는 미제작.",
+  "$conventions": {
+    "path_root_sprite": "sprite/",
+    "path_root_sound": "sound/",
+    "key_separator": ".",
+    "frame_padding": 2
+  },
+
+  "categories": {
+    "materials": ["wood", "metal", "pearl", "light", "doll", "robot"],
+    "colors_by_material": {
+      "wood":  ["brown_light", "brown_medium", "gray"],
+      "metal": ["gold", "gold_warm", "platinum"],
+      "pearl": ["pink", "white"],
+      "light": ["blue_neon", "cream", "white"],
+      "doll":  ["beige", "brown", "navy", "pink"],
+      "robot": ["default"]
+    },
+    "shapes_by_material": {
+      "wood":  ["bear", "cat_ear", "dog", "notch", "rectangle", "teardrop"],
+      "metal": ["bear", "cat_ear", "dog", "notch", "rectangle", "teardrop"],
+      "pearl": ["bear", "cat_ear", "dog", "notch", "teardrop"],
+      "light": ["bear", "cat_ear", "dog", "lantern", "notch", "rectangle", "teardrop"],
+      "doll":  ["bear", "cat_ear", "dog"],
+      "robot": ["default"]
+    },
+    "eye_types": ["dot", "half_moon", "big_circle", "asymmetric", "empty_circle", "vertical_oval"],
+    "expressions": ["default", "happy", "sad", "surprised", "sleepy", "closed", "angry", "half_closed"],
+    "robot_expressions": ["default", "happy", "sad", "surprised", "sleepy", "closed", "angry"],
+    "leg_actions": ["stand", "walk", "run", "sit_down", "stand_up", "sit"],
+    "leg_action_notes": {
+      "stand": "호흡 2프레임 loop",
+      "walk": "걷기 4프레임 loop (Stage 3만, Stage 2 oval은 bounce로 갈음)",
+      "run": "달리기 4프레임 loop (Stage 3만, walk를 빠르게 한 것과 모션 자체가 다름)",
+      "sit_down": "앉는 전환 3프레임 once",
+      "stand_up": "일어서는 전환 3프레임 once (sit_down 역재생 X, 별도 제작 — 무게중심 비대칭으로 위화감 발생)",
+      "sit": "앉아있는 호흡 2프레임 loop",
+      "sleep": "별도 프레임 없음. sit + body rotate(15°) + eyes closed로 표현."
+    },
+    "sfx_categories": ["happy", "excited", "sad", "confused", "scared", "sleepy", "purr", "neutral", "angry"],
+    "system_events": ["birth", "crack_1", "crack_2", "crack_3", "growth", "ending", "opening"]
+  },
+
+  "stage1": {
+    "body": {
+      "rock_a":  { "path": "sprite/stage1/body/rock_a.png",  "exists": true },
+      "rock_b":  { "path": "sprite/stage1/body/rock_b.png",  "exists": true },
+      "rock_c":  { "path": "sprite/stage1/body/rock_c.png",  "exists": true },
+      "capsule": { "path": "sprite/stage1/body/capsule.png", "exists": true }
+    }
+  },
+
+  "stage2": {
+    "$concept": "다리 없는 원형. 단일 sprite (head/leg 분리 의미 없음).",
+    "body": {
+      "pattern": "sprite/stage2/body/{material}/{color}.png",
+      "count_expected": 15,
+      "render": { "scale_y": 1.35 },
+      "$source_history": "원래 head/stage2/{material}/{color}.png였음 (Stage 3 분리본). 다리 없는 원형 컨셉 확정 후 stage2/body/로 승격.",
+      "$original_with_legs_archived_at": "_archive/stage2_with_legs/{material}/{color}.png (READ-ONLY 보존)"
+    }
+  },
+
+  "stage3": {
+    "body": {
+      "pattern": "sprite/stage3/body/{material}/{color}/{shape}.png",
+      "count_expected": 80
+    },
+    "head": {
+      "pattern": "sprite/stage3/head/{material}/{color}/{shape}.png",
+      "count_expected": 80
+    },
+    "leg_static": {
+      "$note": "v1 fallback. leg_frames 도입 후 deprecate 예정.",
+      "basic":         { "path": "sprite/stage3/leg/basic.png",         "exists": true, "shared_by": ["wood", "doll", "metal", "pearl", "light"] },
+      "robot_default": { "path": "sprite/stage3/leg/robot/default.png", "exists": true, "dimensions": [512, 209], "note": "사용자 수동 분리, 비표준 크기" }
+    }
+  },
+
+  "stage3_leg_frames": {
+    "$status": "unimplemented",
+    "$priority": 2,
+    "$note": "Stage 3 전용 (Stage 2는 다리 없음). 검정 실루엣 통일 (robot 제외). 형태별 1세트로 모든 재질 커버. stand_up 별도 제작.",
+    "pattern": "sprite/stage3/leg_frames/{shape}/{action}_{nn}.png",
+    "shapes": ["bear", "cat_ear", "dog", "notch", "rectangle", "teardrop", "lantern"],
+    "count_per_shape": 18,
+    "total_expected": 126,
+    "$breakdown": "7 shapes × 18 frames (stand 2 + walk 4 + run 4 + sit_down 3 + stand_up 3 + sit 2)",
+    "robot": {
+      "$status": "deferred_v2",
+      "$note": "robot 다리는 별도 디자인. v1은 정적(stage3/leg/robot/default.png)만 사용."
+    }
+  },
+
+  "animation_speed": {
+    "$note": "성격/상태 기반 애니메이션 속도 동적 조절. 모든 다리 액션 + 바디 transform에 적용.",
+    "base_frame_interval_ms": 100,
+    "by_personality_energy": [
+      { "range": [-1.0, -0.5], "multiplier": 1.5 },
+      { "range": [-0.5, -0.1], "multiplier": 1.2 },
+      { "range": [-0.1,  0.1], "multiplier": 1.0 },
+      { "range": [ 0.1,  0.5], "multiplier": 0.85 },
+      { "range": [ 0.5,  1.0], "multiplier": 0.7 }
+    ],
+    "additional_factors": {
+      "state_energy_below_30": 1.4,
+      "state_mood_below_-5": 1.2,
+      "state_mood_above_+5": 0.9
+    },
+    "clamp": [0.5, 2.5],
+    "walk_vs_run_selection": {
+      "$note": "IdleScheduler가 이동 액션 선택 시 사용. mood > +5 시 run 확률 +20%.",
+      "energy_above_+0.5": { "run": 0.8, "walk": 0.2 },
+      "energy_above_+0.1": { "run": 0.3, "walk": 0.7 },
+      "energy_below_+0.1": { "run": 0.0, "walk": 1.0 },
+      "state_energy_below_30": "이동 액션 트리거 X (sit/sleep만)"
+    }
+  },
+
+
+  "eyes": {
+    "$status": "unimplemented",
+    "$priority": 1,
+    "$note": "Stage 2 진입부터 필수. 6종 × 8표정 = 48 + robot 7표정 = 55장.",
+    "main_pattern": "sprite/eyes/{eye_type}/{expression}.png",
+    "main_count_expected": 48,
+    "robot_pattern": "sprite/eyes/robot/{expression}.png",
+    "robot_count_expected": 7,
+    "positions_by_shape": {
+      "$note": "바디 중심 기준 비율 (0.0~1.0). animation_system.md §3.2 참조.",
+      "bear":      { "x": 0.50, "y": 0.42 },
+      "cat_ear":   { "x": 0.50, "y": 0.40 },
+      "dog":       { "x": 0.50, "y": 0.45 },
+      "teardrop":  { "x": 0.50, "y": 0.35 },
+      "notch":     { "x": 0.50, "y": 0.40 },
+      "rectangle": { "x": 0.50, "y": 0.40 },
+      "lantern":   { "x": 0.50, "y": 0.42 },
+      "oval":      { "x": 0.50, "y": 0.45 },
+      "robot":     null
+    }
+  },
+
+  "fx": {
+    "$status": "unimplemented",
+    "$priority": 2,
+    "crack": {
+      "frames":    { "pattern": "sprite/fx/crack/{nn}.png", "count": 6, "exists": false }
+    },
+    "birth": {
+      "flash":     { "path": "sprite/fx/birth/flash.png", "exists": false },
+      "particles": { "pattern": "sprite/fx/birth/particle_{nn}.png", "count": 4, "exists": false }
+    },
+    "growth": {
+      "glow":      { "path": "sprite/fx/growth/glow.png", "exists": false },
+      "explode":   { "pattern": "sprite/fx/growth/explode_{nn}.png", "count": 6, "exists": false }
+    },
+    "ending": {
+      "vignette":  { "path": "sprite/fx/ending/vignette.png", "exists": false }
+    },
+    "sparkle": {
+      "frames":    { "pattern": "sprite/fx/sparkle/{nn}.png", "count": 4, "exists": false }
+    }
+  },
+
+  "dynamic": {
+    "$status": "unimplemented",
+    "$priority": 4,
+    "$note": "Phase 3 엔드 컨텐츠 전용. bond 75+ 활성. 가변 확장 시스템.",
+    "sprout": { "pattern": "sprite/dynamic/sprout/{nn}.png", "count": 4, "exists": false },
+    "ribbon": { "pattern": "sprite/dynamic/ribbon/{color}.png", "exists": false },
+    "sparkle":{ "pattern": "sprite/dynamic/sparkle/{nn}.png", "exists": false },
+    "topical":{ "$note": "관심사 반영(예: cat_ear_ribbon.png). 유저별 동적 생성/배치.", "exists": false }
+  },
+
+  "sound": {
+    "$status": "unimplemented",
+    "$priority": 3,
+    "$policy": "미니멀 사운드 — 데스크탑 위젯 환경 + '말 못하는 존재' 정체성. 일반 인터랙션/idle은 무음. 4개 핵심 이벤트만 사운드.",
+    "system": {
+      "opening": { "path": "sound/system/opening.wav", "exists": false, "type": "ambient_pad", "duration_ms": 6000 },
+      "birth":   { "path": "sound/system/birth.wav",   "exists": false, "type": "single_chime", "duration_ms": 1000 },
+      "growth":  { "path": "sound/system/growth.wav",  "exists": false, "type": "single_chime", "duration_ms": 1000 },
+      "ending":  { "path": "sound/system/ending.wav",  "exists": false, "type": "ambient_pad", "duration_ms": 12000 }
+    },
+    "$source_plan": "Suno AI (1순위) 또는 Pixabay Music CC0 (fallback). v1 폴리싱 단계에서 일괄 제작.",
+    "$deprecated_concepts": [
+      "9 emotion 의성어 sfx (35+ 파일)",
+      "재질별 playbackRate/필터 음색 변형",
+      "robot 전용 sfx 세트",
+      "균열 진행 사운드 (crack_1/2/3) — 시각 box-shadow 펄스로 대체"
+    ]
+  }
+}

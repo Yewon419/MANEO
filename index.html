@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MANEO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 위젯 컨테이너 — 투명 배경, Meum이 이 안에 산다 -->
+  <div id="widget">
+    <!-- 오프닝 오버레이 -->
+    <div id="opening-overlay" class="hidden">
+      <span id="opening-text">Meum — 나의 것</span>
+    </div>
+
+    <!-- Meum 스프라이트 레이어 -->
+    <div id="meum-container">
+      <!-- Layer 1-A: 바디 (정적 이미지) -->
+      <img id="body-sprite" src="" alt="meum" draggable="false">
+      <!-- Layer 1-B: 다리 (프레임 애니메이션, Stage 3 전용 — 추후) -->
+      <!-- Layer 2: 눈 (프레임 애니메이션, Stage 2+ — 추후) -->
+      <!-- Layer 3: 동적 장식 (Phase 3 — 추후) -->
+      <!-- Layer 4: 이펙트/파티클 (추후) -->
+    </div>
+
+    <!-- 보이드 UI (채팅 입력) -->
+    <div id="void-ui" class="hidden">
+      <span class="void-quote">"</span>
+      <input
+        id="void-input"
+        type="text"
+        autocomplete="off"
+        spellcheck="false"
+        maxlength="100"
+      >
+      <span class="void-quote">"</span>
+    </div>
+  </div>
+
+  <!-- 디버그 패널 (--dev 모드 전용) -->
+  <div id="debug-panel" class="hidden">
+    <div class="debug-row">
+      <label>bond</label>
+      <input id="dbg-bond" type="range" min="0" max="100" value="0">
+      <span id="dbg-bond-val">0</span>
+    </div>
+    <div class="debug-row">
+      <label>mood</label>
+      <input id="dbg-mood" type="range" min="-10" max="10" value="0">
+      <span id="dbg-mood-val">0</span>
+    </div>
+    <div class="debug-row">
+      <label>energy</label>
+      <input id="dbg-energy" type="range" min="0" max="100" value="100">
+      <span id="dbg-energy-val">100</span>
+    </div>
+    <div class="debug-row">
+      <label>stage</label>
+      <select id="dbg-stage">
+        <option value="1">1 (돌)</option>
+        <option value="2">2 (구체)</option>
+        <option value="3">3 (풀)</option>
+      </select>
+    </div>
+    <button id="dbg-hatch">강제 탄생</button>
+    <button id="dbg-evolve">강제 진화</button>
+  </div>
+
+  <script src="src/state/GameState.js"></script>
+  <script src="src/state/SaveManager.js"></script>
+  <script src="src/engine/IntentClassifier.js"></script>
+  <script src="src/engine/ReactionTable.js"></script>
+  <script src="src/engine/LocalEngine.js"></script>
+  <script src="src/animation/Animator.js"></script>
+  <script src="src/ui/VoidUI.js"></script>
+  <script src="src/ui/SpriteRenderer.js"></script>
+  <script src="src/ui/DebugPanel.js"></script>
+  <script src="src/Game.js"></script>
+</body>
+</html>
