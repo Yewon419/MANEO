@@ -15,6 +15,16 @@ class Game {
     /** @type {DebugPanel} */
     this.debugPanel = null;
 
+    // 인프라 (D-6 도입, 점진 활용)
+    /** @type {EventBus} */
+    this.bus = new EventBus();
+    /** @type {SpriteCatalog} */
+    this.spriteCatalog = new SpriteCatalog();
+    /** @type {SoundCatalog} */
+    this.soundCatalog = null;
+    /** @type {SoundPlayer} */
+    this.soundPlayer = null;
+
     // 타이머
     this._tickInterval = null;
     this._saveInterval = null;
@@ -22,6 +32,11 @@ class Game {
   }
 
   async init() {
+    // 0) 카탈로그 로드 (MANIFEST.json)
+    await this.spriteCatalog.load();
+    this.soundCatalog = new SoundCatalog(this.spriteCatalog);
+    this.soundPlayer = new SoundPlayer(this.soundCatalog);
+
     // 1) 세이브 로드 or 새 게임
     this.state = await SaveManager.load();
     const isNewGame = !this.state;
