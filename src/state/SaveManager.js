@@ -30,6 +30,10 @@ const MATERIAL_OPTIONS = {
 
 const EYE_TYPES = ['dot', 'half_moon', 'big_circle', 'asymmetric', 'empty_circle', 'vertical_oval'];
 
+// v0.1: robot은 랜덤 풀 제외 (Stage 3 미도달 + 다리/눈 별도 디자인 필요).
+// MATERIAL_OPTIONS / MATERIAL_WEIGHTS의 robot 항목은 v0.2 부활 위해 보존.
+const V01_RANDOM_MATERIALS = ['wood', 'metal', 'pearl', 'light', 'doll'];
+
 class SaveManager {
   /** 세이브 로드. 없으면 null 반환 */
   static async load() {
@@ -42,8 +46,7 @@ class SaveManager {
 
   /** 새 게임 생성 — 랜덤 캐릭터 */
   static createNew() {
-    const materials = Object.keys(MATERIAL_OPTIONS);
-    const material = pickRandom(materials);
+    const material = pickRandom(V01_RANDOM_MATERIALS);
     const opts = MATERIAL_OPTIONS[material];
     const color = pickRandom(opts.colors);
     const shape = pickRandom(opts.shapes);

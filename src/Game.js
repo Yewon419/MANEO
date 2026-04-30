@@ -120,7 +120,10 @@ class Game {
     this.renderer.show();
     this.renderer.render(this.state);
     this.renderer.fadeIn();
-    this.animator.startIdle();
+    // Stage 1 돌은 정지 (animation_system.md §7.2). Stage 2부터 breathe.
+    if (this.state.stage >= 2) {
+      this.animator.startIdle();
+    }
   }
 
   // ── 채팅 처리 ──
@@ -186,6 +189,11 @@ class Game {
 
     this.renderer.render(this.state);
 
+    // Stage 1 → 2 진입 시 breathe 시작
+    if (prev === 1 && this.state.stage === 2) {
+      this.animator.startIdle();
+    }
+
     // Stage 3 도달 → 엔딩
     if (this.state.stage === 3 && !this.state.endingSeen) {
       this._playEnding();
@@ -207,6 +215,7 @@ class Game {
         if (this.state.stage === 1) {
           this.state.stage = 2;
           this.renderer.render(this.state);
+          this.animator.startIdle();
           this.debugPanel.sync();
         }
         break;

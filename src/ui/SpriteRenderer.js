@@ -14,7 +14,8 @@ class SpriteRenderer {
   render(gameState) {
     const src = this._resolvePath(gameState);
     if (src !== this._currentSrc) {
-      this.img.src = src;
+      // dev 캐시 회피용 query (production에선 query 무시되어도 동작 동일)
+      this.img.src = `${src}?v=${Date.now()}`;
       this._currentSrc = src;
       console.log(`[sprite] → ${src}`);
     }
@@ -27,29 +28,32 @@ class SpriteRenderer {
   _resolvePath(gameState) {
     const { stage, material, color, shape } = gameState;
 
+    // stage1/body, stage2/body는 흰 배경 원본 (READ-ONLY).
+    // 렌더링은 sprite/nobg/에 있는 배경 제거본을 참조한다.
+    // (정식 빌드 폴더 분리는 v0.2 마이그레이션에서 정리.)
     if (stage === 1) {
       // 돌 단계: rock_a → rock_b → rock_c (균열 진행)
       if (material === 'robot') {
-        return 'sprite/body/stage1/capsule.png';
+        return 'sprite/nobg/stage1/capsule.png';
       }
       const phase = gameState.crackPhase; // 'a', 'b', 'c'
-      return `sprite/body/stage1/rock_${phase}.png`;
+      return `sprite/nobg/stage1/rock_${phase}.png`;
     }
 
     if (stage === 2) {
       // 구체 단계: material/color.png
       if (material === 'robot') {
         // robot은 stage2 전용 에셋 없음 — capsule 유지 (stage1과 동일 외형, 눈만 추가)
-        return 'sprite/body/stage1/capsule.png';
+        return 'sprite/nobg/stage1/capsule.png';
       }
-      return `sprite/body/stage2/${material}/${color}.png`;
+      return `sprite/nobg/stage2/${material}/${color}.png`;
     }
 
     // Stage 3: 풀 스프라이트
     if (material === 'robot') {
-      return 'sprite/body/robot/default.png';
+      return 'sprite/stage3/body/robot/default.png';
     }
-    return `sprite/body/${material}/${color}/${shape}.png`;
+    return `sprite/stage3/body/${material}/${color}/${shape}.png`;
   }
 
   /** 이미지 페이드인 효과 */

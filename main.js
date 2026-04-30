@@ -10,10 +10,15 @@ const WIDGET_SIZE = 300;
 const SAVE_PATH = path.join(app.getPath('userData'), 'save.json');
 const isDev = process.argv.includes('--dev');
 
+// dev 모드: 옛 sprite 경로/스크립트 캐시 무력화
+if (isDev) {
+  app.commandLine.appendSwitch('disable-http-cache');
+}
+
 /** @type {BrowserWindow | null} */
 let mainWindow = null;
 
-function createWindow() {
+async function createWindow() {
   const { width: screenW, height: screenH } = screen.getPrimaryDisplay().workAreaSize;
 
   const saved = loadSave();
@@ -41,6 +46,11 @@ function createWindow() {
   // 'floating' — 풀스크린 앱 위에는 안 뜸
   mainWindow.setAlwaysOnTop(true, 'floating');
   mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: false });
+
+  if (isDev) {
+    // 옛 sprite 경로/JS가 캐시에 박혀 새 경로 fetch를 덮는 문제 방지
+    await mainWindow.webContents.session.clearCache();
+  }
 
   mainWindow.loadFile('index.html');
 
