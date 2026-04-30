@@ -24,6 +24,8 @@ class Game {
     this.soundCatalog = null;
     /** @type {SoundPlayer} */
     this.soundPlayer = null;
+    /** @type {Transition} */
+    this.transition = null;
 
     // 타이머
     this._tickInterval = null;
@@ -70,6 +72,21 @@ class Game {
       onAction: (action) => this._handleDebugAction(action),
     });
 
+    // Transition은 animator + state 의존 → 여기서 생성
+    this.transition = new Transition({
+      catalog: this.spriteCatalog,
+      soundPlayer: this.soundPlayer,
+      bus: this.bus,
+      animator: this.animator,
+      varsProvider: () => ({
+        material: this.state.material,
+        color: this.state.color,
+        shape: this.state.shape,
+        eye_type: this.state.eyeType,
+        phase: this.state.crackPhase,
+      }),
+    });
+
     // 3) Meum 클릭 → 보이드 토글 + 클릭 반응
     meumContainer.addEventListener('click', (e) => {
       if (this.voidUI.isVisible) {
@@ -105,28 +122,19 @@ class Game {
 
   async _playOpening() {
     const overlay = document.getElementById('opening-overlay');
-    const text = document.getElementById('opening-text');
 
+    // overlay는 .hidden 시 display:none이라 transition opacity가 안 먹힘 → 일단 표시
     overlay.classList.remove('hidden');
+    overlay.style.opacity = '0';
     this.renderer.hide();
 
-    // 1.5초 대기
-    await wait(1500);
+    // 시퀀스 실행 (opening.json) — fade/sound/text/swap/fade/emit 8단계
+    await this.transition.play('opening');
 
-    // 텍스트 페이드인
-    text.classList.add('visible');
-    await wait(2000);
-
-    // 텍스트 페이드아웃
-    text.classList.remove('visible');
-    await wait(1000);
-
-    // 오버레이 페이드아웃
-    overlay.style.opacity = '0';
-    await wait(1000);
-
+    // 정리
     overlay.classList.add('hidden');
     overlay.style.opacity = '';
+    this.renderer.show();
 
     this.state.openingSeen = true;
     await SaveManager.save(this.state);

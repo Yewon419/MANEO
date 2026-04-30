@@ -1,0 +1,13 @@
+{
+  "name": "opening",
+  "duration_ms": 6500,
+  "steps": [
+    { "at": 0,    "do": "fade",  "target": "overlay", "from": 0, "to": 1, "duration": 500 },
+    { "at": 500,  "do": "sound", "key": "opening" },
+    { "at": 1500, "do": "text",  "content": "Meum — 나의 것", "duration": 3000, "fade_in": 800, "fade_out": 800 },
+    { "at": 5000, "do": "fade",  "target": "overlay", "from": 1, "to": 0, "duration": 1000 },
+    { "at": 5500, "do": "swap",  "target": "body", "to": "stage1.body.rock_a" },
+    { "at": 6000, "do": "fade",  "target": "body", "from": 0, "to": 1, "duration": 500 },
+    { "at": 6500, "do": "emit",  "event": "opening:done" }
+  ]
+}
