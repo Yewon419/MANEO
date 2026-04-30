@@ -44,6 +44,10 @@ class Game {
       input: document.getElementById('void-input'),
       onSubmit: (text) => this._handleChat(text),
     });
+    // init guard: 의도치 않게 visible 클래스가 박혀있을 가능성 차단
+    this.voidUI.container.classList.add('hidden');
+    this.voidUI.container.classList.remove('visible');
+    this.voidUI._visible = false;
 
     this.debugPanel = new DebugPanel({
       panel: document.getElementById('debug-panel'),
@@ -54,11 +58,12 @@ class Game {
     // 3) Meum 클릭 → 보이드 토글 + 클릭 반응
     meumContainer.addEventListener('click', (e) => {
       if (this.voidUI.isVisible) {
-        // 보이드 열려있으면 — 클릭 반응
-        this._handleClick();
+        // 보이드 열려있으면 — 닫기 (Meum 클릭이 토글 역할)
+        this.voidUI.hide();
       } else {
-        // 보이드 닫혀있으면 — 보이드 열기
+        // 보이드 닫혀있으면 — 보이드 열기 + 클릭 반응
         this.voidUI.show();
+        this._handleClick();
       }
     });
 

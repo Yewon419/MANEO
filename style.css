@@ -122,10 +122,13 @@ input, button, select, label, #meum-container, #void-ui, #debug-panel {
 }
 
 /* ── 보이드 UI (채팅 입력) ── */
+/* design_system.md §5.2: "Meum 옆 약간 아래". v0.1은 Meum(widget 중앙) 바로 아래에 배치
+   (위젯 영역 밖으로 튀어나오는 연출은 v0.2 '위젯 탈출' 시스템과 함께 처리). */
 #void-ui {
   position: absolute;
-  bottom: 20px;
-  right: -30px;
+  top: calc(50% + 40px);
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 2px;

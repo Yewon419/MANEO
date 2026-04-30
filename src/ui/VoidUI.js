@@ -12,6 +12,8 @@ class VoidUI {
     this.input = input;
     this.onSubmit = onSubmit;
     this._visible = false;
+    this._autoHideTimer = null;
+    this._autoHideMs = 5000; // 5초 비활성 시 자동 닫힘
 
     this._setupEvents();
   }
@@ -19,6 +21,7 @@ class VoidUI {
   _setupEvents() {
     // Enter → 전송
     this.input.addEventListener('keydown', (e) => {
+      this._scheduleAutoHide();
       if (e.key === 'Enter') {
         e.preventDefault();
         const text = this.input.value.trim();
@@ -35,6 +38,7 @@ class VoidUI {
     // 입력 길이에 따라 보이드 형태 조정
     this.input.addEventListener('input', () => {
       this._adjustSize();
+      this._scheduleAutoHide();
     });
 
     // 보이드 바깥 클릭 → 닫기
@@ -57,16 +61,33 @@ class VoidUI {
       this.input.focus();
     });
     this._visible = true;
+    this._scheduleAutoHide();
   }
 
   /** 보이드 숨김 */
   hide() {
+    this._clearAutoHide();
     this.container.classList.remove('visible');
     setTimeout(() => {
       this.container.classList.add('hidden');
       this._clearInput();
     }, 300); // fade-out 대기
     this._visible = false;
+  }
+
+  /** 비활성 타이머 (재)예약 — 입력/show 시 호출. ms 후 자동 닫힘 */
+  _scheduleAutoHide() {
+    this._clearAutoHide();
+    this._autoHideTimer = setTimeout(() => {
+      if (this._visible) this.hide();
+    }, this._autoHideMs);
+  }
+
+  _clearAutoHide() {
+    if (this._autoHideTimer) {
+      clearTimeout(this._autoHideTimer);
+      this._autoHideTimer = null;
+    }
   }
 
   /** 토글 */
