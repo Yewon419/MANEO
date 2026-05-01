@@ -88,6 +88,19 @@ input, button, select, label, #meum-container, #void-ui, #debug-panel {
   50%      { filter: brightness(1.3); }
 }
 
+@keyframes hatch-shake {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  10% { transform: translateX(-2px) rotate(-1deg); }
+  20% { transform: translateX(2px)  rotate(1deg); }
+  30% { transform: translateX(-3px) rotate(-2deg); }
+  40% { transform: translateX(3px)  rotate(2deg); }
+  50% { transform: translateX(-4px) rotate(-2deg); }
+  60% { transform: translateX(4px)  rotate(2deg); }
+  70% { transform: translateX(-3px) rotate(-1deg); }
+  80% { transform: translateX(3px)  rotate(1deg); }
+  90% { transform: translateX(-2px) rotate(0); }
+}
+
 /* 애니메이션 클래스 — Animator.js에서 토글 */
 .anim-breathe   { animation: breathe 3s ease-in-out infinite; }
 .anim-wobble    { animation: wobble 0.4s ease-in-out; }
@@ -96,6 +109,13 @@ input, button, select, label, #meum-container, #void-ui, #debug-panel {
 .anim-purr      { animation: purr 0.15s ease-in-out 4; }
 .anim-flinch    { animation: flinch 0.3s ease-out; }
 .anim-crack-glow{ animation: crack-glow 0.8s ease-in-out 2; }
+.anim-hatch-shake{ animation: hatch-shake 3s ease-in-out; }
+
+/* Stage 2 = 다리 없는 원형. 결정 #3.5 — head→body 승격 + scaleY 1.35.
+   #meum-container에 scale 적용해 anim-* (translate/rotate)와 충돌 회피. */
+#meum-container.stage-2 {
+  transform: scaleY(1.35);
+}
 
 /* ── 오프닝 오버레이 ── */
 #opening-overlay {

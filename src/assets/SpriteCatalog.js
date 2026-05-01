@@ -121,6 +121,9 @@ class SpriteCatalog {
       path = path.replace('sprite/stage1/body/', 'sprite/nobg/stage1/');
     } else if (path.startsWith('sprite/stage2/body/')) {
       path = path.replace('sprite/stage2/body/', 'sprite/nobg/stage2/');
+    } else if (path.startsWith('sprite/stage3/body/')) {
+      // v0.1 정적 합성본 (head + leg). v0.2 LegLayer 도입 시 분리.
+      path = path.replace('sprite/stage3/body/', 'sprite/nobg/stage3/');
     }
     return path;
   }

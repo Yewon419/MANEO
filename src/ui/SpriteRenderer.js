@@ -49,11 +49,14 @@ class SpriteRenderer {
       return `sprite/nobg/stage2/${material}/${color}.png`;
     }
 
-    // Stage 3: 풀 스프라이트
+    // Stage 3: 풀 스프라이트.
+    // 디자인 의도는 head + leg 별도 layer 합성이지만 v0.1은 정적 합성 PNG를 단일 img로 표시.
+    // sprite/nobg/stage3/는 composite_stage3.py로 stage3/head + stage3/leg/basic.png 미리 합성한 것.
+    // LegLayer 별도 애니메이션은 v0.2 (걷기/앉기 등).
     if (material === 'robot') {
-      return 'sprite/stage3/body/robot/default.png';
+      return 'sprite/nobg/stage3/robot/default.png';
     }
-    return `sprite/stage3/body/${material}/${color}/${shape}.png`;
+    return `sprite/nobg/stage3/${material}/${color}/${shape}.png`;
   }
 
   /** 이미지 페이드인 효과 */

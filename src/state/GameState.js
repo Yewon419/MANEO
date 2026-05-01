@@ -65,13 +65,12 @@ class GameState {
     this.energy = Math.max(0, Math.min(100, this.energy + delta));
   }
 
-  /** Stage 전환 조건 체크 */
+  /** Stage 전환 조건 체크.
+   *  v0.1: 시연 시간 제약상 totalRuntimeMinutes 조건 제거 (bond만으로 전환).
+   *        Stage 2→3은 v0.1 scope 외라 비활성. 24h/72h 조건은 v0.2 부활. */
   canAdvanceStage() {
     if (this.stage === 1) {
-      return this.bond >= 15 && this.totalRuntimeMinutes >= 1440; // 24h
-    }
-    if (this.stage === 2) {
-      return this.bond >= 50 && this.totalRuntimeMinutes >= 4320; // 72h
+      return this.bond >= 15;
     }
     return false;
   }

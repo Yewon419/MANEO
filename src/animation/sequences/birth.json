@@ -1,0 +1,13 @@
+{
+  "name": "birth",
+  "duration_ms": 7000,
+  "steps": [
+    { "at": 0,    "do": "anim",  "target": "body", "name": "hatch-shake", "duration": 3000 },
+    { "at": 0,    "do": "sound", "key": "birth" },
+    { "at": 3000, "do": "fade",  "target": "body", "from": 1, "to": 0, "duration": 500 },
+    { "at": 3700, "do": "swap",  "target": "body", "to": "stage2.body" },
+    { "at": 3700, "do": "fade",  "target": "body", "from": 0, "to": 1, "duration": 800 },
+    { "at": 4500, "do": "anim",  "target": "body", "name": "bounce", "duration": 400 },
+    { "at": 6500, "do": "emit",  "event": "birth:done" }
+  ]
+}

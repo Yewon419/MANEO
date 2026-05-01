@@ -99,6 +99,9 @@ class Game {
       }
     });
 
+    // 현재 stage에 맞는 CSS class 박기 (재진입 시 scale 등 보장)
+    this._setStageClass(this.state.stage);
+
     // 4) 오프닝 or 바로 시작
     if (isNewGame && !this.state.openingSeen) {
       await this._playOpening();
@@ -203,29 +206,33 @@ class Game {
   // ── Stage 전환 ──
 
   _checkStageAdvance() {
-    if (this.state.canAdvanceStage()) {
+    if (this.state.canAdvanceStage() && !this.transition.isPlaying) {
       this._advanceStage();
     }
   }
 
-  _advanceStage() {
+  async _advanceStage() {
     const prev = this.state.stage;
-    this.state.stage++;
-    console.log(`[stage] ${prev} → ${this.state.stage}`);
 
-    // TODO: 탄생/진화 연출
-
-    this.renderer.render(this.state);
-
-    // Stage 1 → 2 진입 시 breathe 시작
-    if (prev === 1 && this.state.stage === 2) {
+    if (prev === 1) {
+      // Stage 1 → 2: birth 시퀀스 (7s timeline JSON, swap이 stage2 sprite 적용)
+      this.animator.clearAll();          // breathe / queued anim 정리
+      this.state.stage = 2;
+      this._setStageClass(2);
+      console.log(`[stage] ${prev} → ${this.state.stage}`);
+      await this.transition.play('birth');
       this.animator.startIdle();
+      this.debugPanel.sync();
+      await SaveManager.save(this.state);
+      return;
     }
+    // Stage 2 → 3 자동 전환은 v0.1 scope 외 (canAdvanceStage가 false 반환)
+  }
 
-    // Stage 3 도달 → 엔딩
-    if (this.state.stage === 3 && !this.state.endingSeen) {
-      this._playEnding();
-    }
+  _setStageClass(stage) {
+    const meum = document.getElementById('meum-container');
+    meum.classList.remove('stage-1', 'stage-2', 'stage-3');
+    meum.classList.add(`stage-${stage}`);
   }
 
   async _playEnding() {
@@ -242,6 +249,7 @@ class Game {
       case 'hatch':
         if (this.state.stage === 1) {
           this.state.stage = 2;
+          this._setStageClass(2);
           this.renderer.render(this.state);
           this.animator.startIdle();
           this.debugPanel.sync();
@@ -250,11 +258,13 @@ class Game {
       case 'evolve':
         if (this.state.stage === 2) {
           this.state.stage = 3;
+          this._setStageClass(3);
           this.renderer.render(this.state);
           this.debugPanel.sync();
         }
         break;
       case 'stage-change':
+        this._setStageClass(this.state.stage);
         this.renderer.render(this.state);
         break;
     }
