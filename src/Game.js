@@ -87,16 +87,11 @@ class Game {
       }),
     });
 
-    // 3) Meum 클릭 → 보이드 토글 + 클릭 반응
+    // 3) Meum 클릭 → 보이드 토글.
+    //    별도 클릭 반응(LocalEngine.reactClick)은 v0.2에서 다른 트리거(더블클릭/long press)로 분리.
+    //    v0.1은 보이드 채팅이 유일한 입력 채널 — 채팅 외 부수 reaction 발화 차단.
     meumContainer.addEventListener('click', (e) => {
-      if (this.voidUI.isVisible) {
-        // 보이드 열려있으면 — 닫기 (Meum 클릭이 토글 역할)
-        this.voidUI.hide();
-      } else {
-        // 보이드 닫혀있으면 — 보이드 열기 + 클릭 반응
-        this.voidUI.show();
-        this._handleClick();
-      }
+      this.voidUI.toggle();
     });
 
     // 현재 stage에 맞는 CSS class 박기 (재진입 시 scale 등 보장)

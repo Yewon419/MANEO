@@ -109,10 +109,21 @@ class VoidUI {
   }
 
   _adjustSize() {
-    const len = this.input.value.length;
-    // 글자 수에 따라 input 너비 조절
-    this.input.style.width = Math.max(2, Math.min(160, len * 10 + 2)) + 'px';
-    // 길면 타원형으로
+    const text = this.input.value;
+    const len = text.length;
+    // 한글/영문 혼합 너비 추정 — 한글 ~16px, 영문/숫자 ~9px (DungGeunMo 기준)
+    let estPx = 0;
+    for (const ch of text) {
+      // CJK 문자 범위 단순 검사 (한글 가나다 / 한자 / 일본어)
+      const code = ch.charCodeAt(0);
+      if (code >= 0x3000 && code <= 0x9fff || code >= 0xac00 && code <= 0xd7af) {
+        estPx += 16;
+      } else {
+        estPx += 9;
+      }
+    }
+    // 여유 8px 추가 (text-align: center 시 첫/끝 글자 잘림 방지)
+    this.input.style.width = Math.max(2, Math.min(200, estPx + 8)) + 'px';
     if (len > 4) {
       this.container.classList.add('expanded');
     } else {
